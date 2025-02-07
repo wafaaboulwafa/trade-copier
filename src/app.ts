@@ -29,20 +29,19 @@ export default async function startSocket() {
   wsClient.on("update", (data: any) => {
     if (data.topic !== "execution") return;
 
-    console.log(data.topic);
+    const symbol = data.symbol.toLocaleLowerCase();
+    const qty: number = parseInt(data.execPrice);
+    let side = data.side.toLocaleLowerCase();
 
-    if (!pairs.has(data.symbole))
-      pairs.set(data.symbole, new Pair(data.symbole));
+    if (!pairs.has(symbol)) pairs.set(symbol, new Pair(symbol));
+    const pair = pairs.get(symbol);
 
-    const pair = pairs.get(data.pair);
-
-    let side = data.side;
     if (invert) {
-      if (side === "Buy") side = "Sell";
-      else if (side === "Sell") side = "Buy";
+      if (side === "buy") side = "sell";
+      else if (side === "sell") side = "buy";
     }
 
-    pair?.postOrder(side, data.qty * multiplier);
+    pair?.postOrder(side, qty * multiplier);
   });
 
   wsClient.subscribeV5(["execution"], "linear").catch((e) => console.warn(e));
