@@ -21,7 +21,6 @@ class Pair {
 
   constructor(pair: string) {
     this.#pair = pair;
-    this.#initPairInfo();
   }
 
   get pair() {
