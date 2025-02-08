@@ -20,7 +20,7 @@ class Pair {
   #initialized: boolean = false;
 
   constructor(pair: string) {
-    this.#pair = pair;
+    this.#pair = pair.toUpperCase();
   }
 
   get pair() {

@@ -26,11 +26,13 @@ export default async function startSocket() {
   process.once("SIGINT", () => wsClient.closeAll(true));
   process.once("SIGTERM", () => wsClient.closeAll(true));
 
-  wsClient.on("update", (data: any) => {
-    if (data.topic !== "execution") return;
+  wsClient.on("update", (msg: any) => {
+    if (msg.topic !== "execution") return;
+    const data = (msg.data.length > 0 && (msg.data[0] as any)) || undefined;
+    if (!data) return;
 
     const symbol = data.symbol.toLocaleLowerCase();
-    const qty: number = parseInt(data.execPrice);
+    const qty: number = parseFloat(data.execQty);
     let side = data.side.toLocaleLowerCase();
 
     if (!pairs.has(symbol)) pairs.set(symbol, new Pair(symbol));
@@ -40,6 +42,9 @@ export default async function startSocket() {
       if (side === "buy") side = "sell";
       else if (side === "sell") side = "buy";
     }
+
+    if (side.toLocaleLowerCase() === "sell") side = "Sell";
+    if (side.toLocaleLowerCase() === "buy") side = "Buy";
 
     pair?.postOrder(side, qty * multiplier);
   });
