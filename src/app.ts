@@ -6,7 +6,7 @@ import Pair from "./pair";
 export default async function startSocket() {
   const invert: boolean =
     process.env.INVERT?.toLocaleLowerCase() === "true" || false;
-  const multiplier: number = parseInt(process.env.MULTIPLIER || "0") || 1;
+  const multiplier: number = parseFloat(process.env.MULTIPLIER || "0") || 1;
   const pairs = new Map<string, Pair>();
 
   const wsClient = new WebsocketClient({
